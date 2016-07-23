@@ -1,5 +1,6 @@
 .data
 msg:	.ascii "Hello, World!\n"	# message to be written
+titl:	.ascii "Hello, Assembly"	# message to set console title to
 
 handle:	.byte 0				# reserved byte for standard out handle
 written:.byte 0				# reserved byte for chars written
@@ -9,6 +10,8 @@ written:.byte 0				# reserved byte for chars written
 .text
 
 go:
+	pushl $titl
+	call _SetConsoleTitleA@4# sets console title to Hello, Assembly
 	pushl $-11
 	call _GetStdHandle@4	# grabs standard handle -11, standard out.
 	mov %eax, handle	# moves register eax w/handle to handle.
@@ -18,13 +21,9 @@ go:
 	pushl $msg
 	pushl handle
 	call _WriteConsoleA@20	# WriteConsole(handle, msg, len, written, null)
-	pushl $-10		
-	call _GetStdHandle@4	# grabs standard handle -10, standard input.
-	mov %eax, handle	# moves eax to mem location handle.
-				# and then does nothing, since I didn't have
-				# time to figure out how to make it wait for
-				# input from the user. This was related to
-				# another part that changed the console's
-				# title, but only while program was running.
+	mov $0xFFFFFFFF, %ecx	# Puts a large value into ecx
+loop:	dec %ecx		# Decrements ecx.
+	cmp $0, %ecx		# if ecx != 0...
+	jne loop		# ... goto loop
 	pushl $0
 	call _ExitProcess@4	# ExitProcess(0) to quit.
