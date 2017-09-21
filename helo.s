@@ -1,29 +1,29 @@
 .data
-msg:	.ascii "Hello, World!\n"	# message to be written
-titl:	.ascii "Hello, Assembly"	# message to set console title to
+str1:	.ascii "Hello, World!\n"	
+str2:	.ascii "Hello, Assembly"	
 
-handle:	.byte 0				# reserved byte for standard out handle
-written:.byte 0				# reserved byte for chars written
+handle:	.byte 0
+written:.byte 0
 
-.global	go
+.global	l1
 
 .text
 
-go:
-	pushl $titl
-	call _SetConsoleTitleA@4# sets console title to Hello, Assembly
+l1:
+	pushl $str2
+	call _SetConsoleTitleA@4
 	pushl $-11
-	call _GetStdHandle@4	# grabs standard handle -11, standard out.
-	mov %eax, handle	# moves register eax w/handle to handle.
+	call _GetStdHandle@4	
+	mov %eax, handle	
 	pushl $0
 	pushl $written
 	pushl $14
-	pushl $msg
+	pushl $str1
 	pushl handle
-	call _WriteConsoleA@20	# WriteConsole(handle, msg, len, written, null)
-	mov $0xFFFFFFFF, %ecx	# Puts a large value into ecx
-loop:	dec %ecx		# Decrements ecx.
-	cmp $0, %ecx		# if ecx != 0...
-	jne loop		# ... goto loop
+	call _WriteConsoleA@20	
+	mov $0xFFFFFFFF, %ecx	
+l2:	dec %ecx		
+	cmp $0, %ecx		
+	jne l2		
 	pushl $0
-	call _ExitProcess@4	# ExitProcess(0) to quit.
+	call _ExitProcess@4
